@@ -1,6 +1,7 @@
 from rasa.shared.nlu.training_data.formats.rasa_yaml import RasaYAMLReader
 from rasa.shared.nlu.training_data.formats.dialogflow import DialogflowReader
 from rasa.shared.nlu.training_data.formats.luis import LuisReader
+from rasa.shared.nlu.training_data.formats.rasa_csv import RasaCSVReader
 from rasa.shared.nlu.training_data.formats.markdown import (
     MarkdownReader,
     MarkdownWriter,

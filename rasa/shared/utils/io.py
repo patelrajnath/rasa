@@ -10,9 +10,11 @@ import re
 from typing import Any, Dict, List, Optional, Text, Type, Union
 import warnings
 
+from pandas.errors import EmptyDataError
 from ruamel import yaml as yaml
 from ruamel.yaml import RoundTripRepresenter, YAMLError
 from ruamel.yaml.constructor import DuplicateKeyError
+import pandas as pd
 
 from rasa.shared.constants import (
     DEFAULT_LOG_LEVEL,
@@ -289,6 +291,23 @@ def read_yaml_file(filename: Union[Text, Path]) -> Union[List[Any], Dict[Text, A
         return read_yaml(read_file(filename, DEFAULT_ENCODING))
     except (YAMLError, DuplicateKeyError) as e:
         raise YamlSyntaxException(filename, e)
+
+
+def read_csv_file(filename: Union[Text, Path]) -> Union[List[Any], Dict[Text, Any]]:
+    """Parses a yaml file.
+
+    Raises an exception if the content of the file can not be parsed as YAML.
+
+    Args:
+        filename: The path to the file which should be read.
+
+    Returns:
+        Parsed content of the file.
+    """
+    try:
+        return pd.read_csv(filename, sep='\t', error_bad_lines=False, encoding=DEFAULT_ENCODING)
+    except EmptyDataError:
+        print(filename, " is empty")
 
 
 def write_yaml(

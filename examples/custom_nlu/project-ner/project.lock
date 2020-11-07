@@ -29,7 +29,7 @@ train:
       md5: 7a296028b5bb154f8d96281787202b3c
   outs:
     - path: training/model-best
-      md5: 3a2dd1a0caf6b993f8b6e5c7cc02f15d
+      md5: 1b100b3a2b26a49594bf41c742f7a3cc
   spacy_version: 3.0.0rc2
   spacy_git_version: ace6ae435
 evaluate:
@@ -39,11 +39,11 @@ evaluate:
       ./metrics/default.json --gpu-id -1
   deps:
     - path: training/model-best
-      md5: 3a2dd1a0caf6b993f8b6e5c7cc02f15d
+      md5: 1b100b3a2b26a49594bf41c742f7a3cc
     - path: corpus/test.spacy
       md5: 3d4e4267dfc7fc2c45cb694077ffd075
   outs:
     - path: metrics/default.json
-      md5: f6d162d1ceb0306add77f2eb992b3771
+      md5: 7f8c5d270345587bfc3b7c4c6c261280
   spacy_version: 3.0.0rc2
   spacy_git_version: ace6ae435

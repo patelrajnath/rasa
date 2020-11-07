@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Text, Optional, Union, List, Tuple, Callable, Set, Iterable
 
 YAML_FILE_EXTENSIONS = [".yml", ".yaml"]
+CSV_FILE_EXTENSIONS = [".csv"]
 JSON_FILE_EXTENSIONS = [".json"]
 MARKDOWN_FILE_EXTENSIONS = [".md"]
 TRAINING_DATA_EXTENSIONS = set(
@@ -45,6 +46,18 @@ def is_likely_json_file(file_path: Text) -> bool:
         `True` if the file likely contains data in json format, `False` otherwise.
     """
     return Path(file_path).suffix in set(JSON_FILE_EXTENSIONS)
+
+
+def is_likely_csv_file(file_path: Text) -> bool:
+    """Check if a file likely contains json.
+
+    Arguments:
+        file_path: path to the file
+
+    Returns:
+        `True` if the file likely contains data in json format, `False` otherwise.
+    """
+    return Path(file_path).suffix in set(CSV_FILE_EXTENSIONS)
 
 
 def is_likely_markdown_file(file_path: Text) -> bool:

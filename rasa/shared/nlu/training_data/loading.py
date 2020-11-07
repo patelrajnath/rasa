@@ -5,7 +5,7 @@ import typing
 from typing import Optional, Text
 
 import rasa.shared.utils.io
-from rasa.shared.nlu.training_data.formats import MarkdownReader, NLGMarkdownReader
+from rasa.shared.nlu.training_data.formats import MarkdownReader, NLGMarkdownReader, RasaCSVReader
 from rasa.shared.nlu.training_data.formats.dialogflow import (
     DIALOGFLOW_AGENT,
     DIALOGFLOW_ENTITIES,
@@ -27,6 +27,7 @@ LUIS = "luis"
 RASA = "rasa_nlu"
 MARKDOWN = "md"
 RASA_YAML = "rasa_yml"
+RASA_CSV = "rasa_csv"
 UNK = "unk"
 MARKDOWN_NLG = "nlg.md"
 JSON = "json"
@@ -96,6 +97,8 @@ def _reader_factory(fformat: Text) -> Optional["TrainingDataReader"]:
         reader = NLGMarkdownReader()
     elif fformat == RASA_YAML:
         reader = RasaYAMLReader()
+    elif fformat == RASA_CSV:
+        reader = RasaCSVReader()
     return reader
 
 
@@ -103,6 +106,7 @@ def _load(filename: Text, language: Optional[Text] = "en") -> Optional["Training
     """Loads a single training data file from disk."""
 
     fformat = guess_format(filename)
+    print(fformat)
     if fformat == UNK:
         raise ValueError(f"Unknown data format for file '{filename}'.")
 
@@ -140,6 +144,8 @@ def guess_format(filename: Text) -> Text:
             guess = MARKDOWN_NLG
         elif RasaYAMLReader.is_yaml_nlu_file(filename):
             guess = RASA_YAML
+        elif RasaCSVReader.is_csv_nlu_file(filename):
+            guess = RASA_CSV
     else:
         for file_format, format_heuristic in _json_format_heuristics.items():
             if format_heuristic(js, filename):

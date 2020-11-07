@@ -19,4 +19,7 @@ pipeline:
 
 policies:
   - name: STSFallbackPolicy
+    data_sts: "project_sts/sts"
+    data_nlu: "project_sts/nlu"
+    model: "project_sts/outputs/best_model"
   - name: MappingPolicy
