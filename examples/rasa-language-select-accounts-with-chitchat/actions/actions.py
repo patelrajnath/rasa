@@ -13,12 +13,17 @@ from typing import Any, Text, Dict, List
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
+from deep_translator import GoogleTranslator, MyMemoryTranslator, MicrosoftTranslator
 
+import json
+import random
+from typing import Any, Text, Dict, List
 import fasttext
 
-from rasa.shared.core.trackers import DialogueStateTracker
-
+import logging
 logger = logging.getLogger(__name__)
+
+microsoft_api_key = '6eb25dc1e0824f358ee564e81d6e0752'
 
 
 class LanguageIdentification(object):
@@ -34,7 +39,7 @@ class LanguageIdentification(object):
 class MultilingualResponse(object):
     def __init__(self):
         # with open("multilingual_response.json") as fp:
-        with open("account_mling.json") as fp:
+        with open("multilingual_responses.json") as fp:
             self.multilingual_response = json.load(fp)
 
     @staticmethod
@@ -53,7 +58,11 @@ class MultilingualResponse(object):
                 # if language detection fails (ie detects other than languages listed in the response)
                 # fallback to English
                 responses = mling_response[default_lang]
-                final_response = self.random_response(responses)
+                response_english = self.random_response(responses)
+                # final_response = GoogleTranslator(source='en', target=lang).translate(response_english)
+                # response_translated = MyMemoryTranslator(source='en', target=lang).translate(response_english)
+                final_response = MicrosoftTranslator(api_key=microsoft_api_key, source='en', target=lang).translate(
+                    response_english)
         except:
             final_response = None
         return final_response
@@ -74,13 +83,52 @@ class ActionLanguageSelect(Action):
         # print(tracker.latest_message)
         # print(tracker.events)
         intent = tracker.latest_message['intent'].get('name')
+        logger.info(f'The intent:{intent}')
         input_text = tracker.latest_message['text']
+        logger.info(f'The user text:{input_text}')
+
+        eqa_response = tracker.latest_message['eqa_response']
+        logger.info(f'The Dummy EQA Response:{eqa_response}')
+
         lang = language_detection.predict_lang(input_text)
+        logger.info('Predicted language is:{}'.format(lang))
         response = multilingual_response.predict_response(intent=intent, lang=lang)
+
         if response:
             logger.info('Multilingual Response:{0}'.format(response))
             dispatcher.utter_message(text=response)
         else:
-            logger.info('There is no multilingual response for intent:{0}, '
-                        'in language:{1}'.format(intent, lang))
+            utter_intent = "utter_{}".format(intent)
+            logger.info(f'utter_intent:{utter_intent}')
+            try:
+                response_default = domain.get('responses').get(utter_intent)[0].get('text')
+            except:
+                # This will be set if there is no response set for this utter_intent
+                logger.info(f'Setting the response with utter_intent handle:{utter_intent}')
+                response_default = utter_intent
+
+            if response_default:
+                if lang == 'en':
+                    logger.info('Setting default response for the intent:{0}, '
+                                'in language:{1}.'.format(intent, lang))
+                    dispatcher.utter_message(text=response_default)
+                else:
+                    logger.info('There is no multilingual response for intent:{0}, '
+                                'in language:{1}. Running online translation.'.format(intent, lang))
+                    if microsoft_api_key and lang == 'zh':
+                        # Change the language from 'zh' to 'Chinese Simplified',
+                        # as Microsoft translate is not supported with zh
+                        lang = "Chinese Simplified"
+                    elif lang == 'zh':
+                        # Change the language from 'zh' to 'zh-cn',
+                        # as google translate is not supported with zh
+                        lang = "{}-cn".format(lang)
+
+                    # response_translated = GoogleTranslator(source='en', target=lang).translate(response_default)
+                    # response_translated = MyMemoryTranslator(source='en', target=lang).translate(response_default)
+                    response_translated = MicrosoftTranslator(api_key=microsoft_api_key, source='en', target=lang).translate(response_default)
+
+                    logger.info('Translated response is:{0} in language:{1}, '
+                                'for the english response:{2}'.format(response_translated, lang, response_default))
+                    dispatcher.utter_message(text=response_translated)
         return []
