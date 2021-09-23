@@ -16,7 +16,7 @@ from rasa.nlu.classifiers.keyword_intent_classifier import KeywordIntentClassifi
 from rasa.nlu.classifiers.mitie_intent_classifier import MitieIntentClassifier
 from rasa.nlu.classifiers.sklearn_intent_classifier import SklearnIntentClassifier
 from rasa.nlu.extractors.crf_entity_extractor import CRFEntityExtractor
-from rasa.nlu.extractors.custom_spacy_entity_extractor import SpacyCustomNER
+# from rasa.nlu.extractors.custom_spacy_entity_extractor import SpacyCustomNER
 from rasa.nlu.extractors.custom_spacy_entity_extractor_remote import RemoteSpacyCustomNER
 from rasa.nlu.extractors.duckling_entity_extractor import DucklingEntityExtractor
 from rasa.nlu.extractors.entity_synonyms import EntitySynonymMapper
@@ -75,7 +75,7 @@ component_classes = [
     LanguageModelTokenizer,
     # extractors
     SpacyEntityExtractor,
-    SpacyCustomNER,
+    # SpacyCustomNER,
     MitieEntityExtractor,
     CRFEntityExtractor,
     DucklingEntityExtractor,

@@ -30,8 +30,8 @@ if typing.TYPE_CHECKING:
 SKLEARN_MODEL_FILE_NAME = "intent_classifier_sklearn.pkl"
 
 # FLASK_SERVER_IP = 'custom-nlu'
-FLASK_SERVER_IP = 'host.docker.internal'
-# FLASK_SERVER_IP = '127.0.0.1'
+# FLASK_SERVER_IP = 'host.docker.internal'
+FLASK_SERVER_IP = '127.0.0.1'
 FLASK_SERVER_PORT = '9000'
 
 
